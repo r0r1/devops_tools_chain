@@ -82,7 +82,7 @@ with Diagram("DevOps Tools Chain", show=False):
         supporting = Custom("JIRA Task", "./resources/jira.png")
         supporting << [Custom("SLA", ""), Custom("Task Resolution", "")]
 
-        devops_team >> supporting
+        devops_team << supporting
 
     with Cluster("Culture"):
         sharing_session = Custom("Sharing Session", "")
@@ -91,6 +91,15 @@ with Diagram("DevOps Tools Chain", show=False):
 
         changes_review = Custom("Changes Review", "")
 
+        culture = [qna, sharing_session, changes_review]
+
         documentation >> sharing_session
         documentation >> qna
-        documentation >> changes_review 
+        documentation >> changes_review
+
+    with Cluster("Engineering Team"):
+        engineering_team = Custom("Developer / QA / PO", "")
+
+        engineering_team >> supporting
+        engineering_team >> culture
+     
