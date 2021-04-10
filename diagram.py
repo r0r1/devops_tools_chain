@@ -67,3 +67,30 @@ with Diagram("DevOps Tools Chain", show=False):
             escalation - [Custom("PagerDuty", "./resources/pagerduty.png")]
 
             devops_team >> escalation
+    
+    with Cluster("Adhoc Request / Supporting"):
+        supporting = Custom("JIRA Task", "./resources/confluence.png")
+        supporting << [Custom("SLA", ""), Custom("Task Resolution", "")]
+
+        devops_team >> supporting
+
+    with Cluster("Documentation"):
+        with Cluster("Confluence"):
+            documentation = Custom("Confluence (How To's)", "./resources/confluence.png")
+
+        with Cluster("Diagram as Code"):
+            diargam_as_code = Custom("Infrastructure Architecture", "")
+
+        continous_integration >> documentation
+        provisioning >> documentation
+        secret_management >> documentation
+        edge_stack >> documentation
+        service_discovery_mesh >> documentation
+        openldap >> documentation
+        monitoring >> documentation
+        rundeck >> documentation
+        vpn >> documentation
+        escalation >> documentation
+        supporting >> documentation
+
+        
