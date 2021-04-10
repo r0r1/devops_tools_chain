@@ -13,13 +13,6 @@ with Diagram("DevOps Tools Chain", show=False):
 
     devops_team = Custom("DevOps Team", "./resources/devops.png")
 
-    with Cluster("Documentation"):
-        with Cluster("Confluence"):
-            documentation = Custom("Confluence (How To's)", "./resources/confluence.png")
-
-        with Cluster("Diagram as Code"):
-            diagram_as_code = Custom("Infrastructure Architecture", "./resources/diagram.png")
-
     with Cluster("Tools Chain"):
         openldap = Custom("OpenLDAP", "./resources/openldap.png")
 
@@ -27,81 +20,77 @@ with Diagram("DevOps Tools Chain", show=False):
             continous_integration = Jenkins("Jenkins Job and Pipeline")
             continous_integration - [Custom("Bitbucket CI", "./resources/bitbucket.png")] << openldap
 
-            devops_team >> continous_integration >> documentation
+            devops_team >> continous_integration
         
         with Cluster("Provisioning"):
             provisioning = Terraform("Terraform")
             provisioning - [Custom("Packer", "./resources/packer.png"), Custom("Helm", "./resources/helm.png")]
 
-            devops_team >> provisioning >> documentation
+            devops_team >> provisioning
 
         with Cluster("Secret Management"):
             secret_management = Vault("Vault")
             secret_management << Edge(label="collect key/value") << [Consul("Consul")] << openldap
 
-            devops_team >> secret_management >> diagram_as_code
+            devops_team >> secret_management
 
         with Cluster("Edge Stack", direction="LR"):
             edge_stack = Ambassador("Ambassador Ingress Gateway")
             edge_stack >> [Kong("KONG API Gateway")]
 
-            devops_team >> edge_stack >> diagram_as_code
+            devops_team >> edge_stack
 
         with Cluster("Service Discovery and Mesh"):
             service_discovery_mesh = Consul("Consul")
             service_discovery_mesh << [Envoy("Consul Connect+Envoy")]
 
-            devops_team >> service_discovery_mesh >> diagram_as_code
+            devops_team >> service_discovery_mesh
 
         with Cluster("Monitoring and Alerting"):
             monitoring = Prometheus("Prometheus Metric and Alert Manager")
             monitoring >> [Grafana("Dashboard Monitoring")] << openldap
 
-            devops_team >> monitoring >> documentation
+            devops_team >> monitoring
 
         with Cluster("Scheduler and Operational Task"):
             rundeck = Custom("Rundeck", "./resources/rundeck.png")
             rundeck << [openldap]
 
-            devops_team >> rundeck >> documentation
+            devops_team >> rundeck
         
         with Cluster("VPN"):
             vpn = Custom("Pritunl", "./resources/pritunl.png")
             vpn << [openldap]
 
-            devops_team >> vpn >> documentation
+            devops_team >> vpn
         
-        openldap >> documentation
 
         with Cluster("Security and Escalation"):
             escalation = Custom("Horangi Warden", "./resources/horangi.png")
             escalation - [Custom("PagerDuty", "./resources/pagerduty.png")]
 
-            devops_team >> escalation >> documentation
-    
+            devops_team >> escalation
+        
+        with Cluster("Documentation"):
+            documentation = Custom("documentation (How To's)", "./resources/confluence.png")
+
+            documentation - [Custom("Infrastructure Architecture", "./resources/diagram.png")]
+            
+            devops_team >> documentation
+        
     with Cluster("Adhoc Request / Supporting"):
         supporting = Custom("JIRA Task", "./resources/jira.png")
         supporting << [Custom("SLA", ""), Custom("Task Resolution", "")]
 
-        devops_team >> supporting >> documentation
+        devops_team >> supporting
 
     with Cluster("Culture"):
-        culture = Custom("Engineering Team", "")
-        documentation >> culture
-        supporting >> culture
+        sharing_session = Custom("Sharing Session", "")
 
-    
+        qna = Custom("QnA", "")
 
-        # continous_integration >> documentation
-        # provisioning >> documentation
-        # secret_management >> documentation
-        # edge_stack >> documentation
-        # service_discovery_mesh >> documentation
-        # openldap >> documentation
-        # monitoring >> documentation
-        # rundeck >> documentation
-        # vpn >> documentation
-        # escalation >> documentation
-        # supporting >> documentation
+        changes_review = Custom("Changes Review", "")
 
-        
+        documentation >> sharing_session
+        documentation >> qna
+        documentation >> changes_review 
